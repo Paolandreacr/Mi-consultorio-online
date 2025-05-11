@@ -128,118 +128,62 @@
   </section>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      getDocs,
-      query,
-      orderBy,
-      onSnapshot,
-      serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+// Importaciones necesarias desde Firebase v9 modular
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBDzdx427sDV7gSLby-GVi3n3OSyEv0EBw",
-      authDomain: "pagina-citas-medicas-on-line.firebaseapp.com",
-      projectId: "pagina-citas-medicas-on-line",
-      storageBucket: "pagina-citas-medicas-on-line.appspot.com",
-      messagingSenderId: "822639587616",
-      appId: "1:822639587616:web:2ac3396f14abc7eb39a745"
-    };
+// Configuración de Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyD-FvCr6vHDOToqKfGOn3bXf5MNzrfqT8U",
+  authDomain: "comentarios-70ae6.firebaseapp.com",
+  projectId: "comentarios-70ae6",
+  storageBucket: "comentarios-70ae6.appspot.com",
+  messagingSenderId: "233112209992",
+  appId: "1:233112209992:web:6ae3bc4ff3b4a22a1776aa"
+};
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const comentariosRef = collection(db, "comentarios");
+// Inicializa la app y Firestore
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const comentariosRef = collection(db, "comentarios");
 
-    const carousel = document.getElementById("testimonios-carousel");
-    const form = document.getElementById("comentario-form");
+// Manejo del formulario
+const form = document.getElementById("comentario-form");
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const nombre = document.getElementById("nombre").value.trim();
-      const mensaje = document.getElementById("mensaje").value.trim();
-      const calificacion = parseInt(document.getElementById("calificacion").value);
+  const nombre = document.getElementById("nombre").value.trim();
+  const mensaje = document.getElementById("mensaje").value.trim();
+  const calificacion = parseInt(document.getElementById("calificacion").value);
 
-      if (!nombre || !mensaje || !calificacion) {
-        alert("Por favor, completa todos los campos.");
-        return;
-      }
+  // Validaciones básicas
+  if (!nombre || !mensaje || isNaN(calificacion)) {
+    alert("Por favor completa todos los campos.");
+    return;
+  }
 
-      const malasPalabras = ["tonto", "idiota", "estúpido", "imbécil", "mierda"];
-      const contieneOfensivo = malasPalabras.some(p => mensaje.toLowerCase().includes(p));
-
-      if (contieneOfensivo) {
-        alert("Tu comentario contiene lenguaje inapropiado.");
-        return;
-      }
-
-      try {
-        const snapshot = await getDocs(query(comentariosRef, orderBy("timestamp", "desc")));
-        const esDuplicado = snapshot.docs.slice(0, 5).some(doc => {
-          const data = doc.data();
-          return data.nombre === nombre && data.mensaje === mensaje;
-        });
-
-        if (esDuplicado) {
-          alert("Ya enviaste este comentario recientemente.");
-          return;
-        }
-
-        await addDoc(comentariosRef, {
-          nombre,
-          mensaje,
-          calificacion,
-          timestamp: serverTimestamp()
-        });
-
-        form.reset();
-        alert("¡Gracias por tu comentario!");
-      } catch (error) {
-        console.error("Error al enviar comentario:", error);
-        alert("Ocurrió un error al enviar tu comentario. Intenta de nuevo.");
-      }
+  try {
+    await addDoc(comentariosRef, {
+      nombre,
+      mensaje,
+      calificacion,
+      timestamp: serverTimestamp()
     });
 
-    function renderComentario(data) {
-      const div = document.createElement("div");
-      div.className = "bg-white p-4 rounded-xl shadow hidden";
-      div.innerHTML = `
-        <div class="flex items-center justify-between">
-          <p class="font-bold">${data.nombre}</p>
-          <div class="text-yellow-500">${"★".repeat(data.calificacion)}${"☆".repeat(5 - data.calificacion)}</div>
-        </div>
-        <p class="text-sm mt-2">${data.mensaje}</p>
-      `;
-      carousel.appendChild(div);
-    }
+    form.reset();
+    alert("¡Gracias por tu comentario!");
+  } catch (error) {
+    console.error("Error al guardar comentario:", error);
+    alert("Ocurrió un error al enviar tu comentario. Intenta de nuevo.");
+  }
+});
 
-    const q = query(comentariosRef, orderBy("timestamp", "desc"));
-
-    onSnapshot(q, (snapshot) => {
-      carousel.innerHTML = "";
-      const comentarios = snapshot.docs.map(doc => doc.data());
-
-      comentarios.forEach((comentario, i) => {
-        renderComentario(comentario);
-        if (i === 0) {
-          carousel.lastChild.classList.remove("hidden");
-        }
-      });
-
-      currentTestimonial = 0;
-    });
-
-    let currentTestimonial = 0;
-    setInterval(() => {
-      const all = carousel.querySelectorAll("div");
-      if (all.length > 1) {
-        all[currentTestimonial].classList.add("hidden");
-        currentTestimonial = (currentTestimonial + 1) % all.length;
-        all[currentTestimonial].classList.remove("hidden");
-      }
-    }, 5000);
   </script>
 
   <footer class="p-6 text-center text-sm text-gray-600">
