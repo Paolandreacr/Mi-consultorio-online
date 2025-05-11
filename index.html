@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -112,7 +111,7 @@
     </form>
   </section>
 
-  <section class="p-8 bg-[var(--color-secundario)] text-white">
+  <section class="p-8 bg-[var(--color-secundario)] text-brown">
     <h2 class="text-2xl font-semibold text-center mb-6">Contacto</h2>
     <p class="text-center mb-4">Escanea los códigos QR para visitar mis redes sociales:</p>
     <div class="flex justify-center gap-8">
@@ -126,74 +125,7 @@
       </div>
     </div>
   </section>
-
-  <script type="module">
-// Importaciones necesarias desde Firebase v9 modular
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  serverTimestamp,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-
-// Configuración de Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyD-FvCr6vHDOToqKfGOn3bXf5MNzrfqT8U",
-  authDomain: "comentarios-70ae6.firebaseapp.com",
-  projectId: "comentarios-70ae6",
-  storageBucket: "comentarios-70ae6.appspot.com",
-  messagingSenderId: "233112209992",
-  appId: "1:233112209992:web:6ae3bc4ff3b4a22a1776aa"
-};
-
-// Inicializa la app y Firestore
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const comentariosRef = collection(db, "comentarios");
-
-// Manejo del formulario
-const form = document.getElementById("comentario-form");
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const nombre = document.getElementById("nombre").value.trim();
-  const mensaje = document.getElementById("mensaje").value.trim();
-  const calificacion = parseInt(document.getElementById("calificacion").value);
-
-  // Validaciones básicas
-  if (!nombre || !mensaje || isNaN(calificacion)) {
-    alert("Por favor completa todos los campos.");
-    return;
-  }
-
-  try {
-    await addDoc(comentariosRef, {
-      nombre,
-      mensaje,
-      calificacion,
-      timestamp: serverTimestamp()
-    });
-
-    form.reset();
-    alert("¡Gracias por tu comentario!");
-  } catch (error) {
-    console.error("Error al guardar comentario:", error);
-    alert("Ocurrió un error al enviar tu comentario. Intenta de nuevo.");
-  }
-});
-
-  </script>
-
-  <footer class="p-6 text-center text-sm text-gray-600">
-    <p>© 2025 Dra. Paola Andrea Castro Rojas. Todos los derechos reservados.</p>
-    <p>Correo: paolan.caro97@gmail.com | Teléfono: (318) 748-8252</p>
-  </footer>
-</body>
-</html>
-
-  <!-- Contacto -->
+  
   <footer class="p-6 text-center text-sm text-gray-600">
     <p>© 2025 Dra. Paola Andrea Castro Rojas. Todos los derechos reservados.</p>
     <p>Correo: paolan.caro97@gmail.com | Teléfono: (318) 748-8252</p>
