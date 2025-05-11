@@ -136,10 +136,10 @@
   </div>
 
  <!-- Formulario de nuevo comentario -->
-  <form class="bg-white p-4 rounded-xl shadow space-y-4 mt-8">
-    <input type="text" placeholder="Tu nombre" class="w-full border border-gray-300 p-2 rounded" required>
-    <textarea placeholder="Tu comentario" class="w-full border border-gray-300 p-2 rounded" required></textarea>
-    <select class="w-full border border-gray-300 p-2 rounded">
+  <form id="comentario-form" class="bg-white p-4 rounded-xl shadow space-y-4 mt-8">
+    <input type="text" id="nombre" placeholder="Tu nombre" class="w-full border border-gray-300 p-2 rounded" required>
+    <textarea id="mensaje" placeholder="Tu comentario" class="w-full border border-gray-300 p-2 rounded" required></textarea>
+    <select id="calificacion" class="w-full border border-gray-300 p-2 rounded">
       <option value="5">★★★★★</option>
       <option value="4">★★★★☆</option>
       <option value="3">★★★☆☆</option>
@@ -150,14 +150,76 @@
   </form>
 </section>
 
-<script>
-  const testimonials = document.querySelectorAll('#testimonios-carousel > div');
-  let currentTestimonial = 0;
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
+  const firebaseConfig = {
+    apiKey: "AIzaSyBDzdx427sDV7gSLby-GVi3n3OSyEv0EBw",
+    authDomain: "pagina-citas-medicas-on-line.firebaseapp.com",
+    projectId: "pagina-citas-medicas-on-line",
+    storageBucket: "pagina-citas-medicas-on-line.firebasestorage.app",
+    messagingSenderId: "822639587616",
+    appId: "1:822639587616:web:2ac3396f14abc7eb39a745"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const comentariosRef = collection(db, "comentarios");
+
+  const carousel = document.getElementById("testimonios-carousel");
+  const form = document.getElementById("comentario-form");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const nombre = document.getElementById("nombre").value;
+    const mensaje = document.getElementById("mensaje").value;
+    const calificacion = document.getElementById("calificacion").value;
+
+    await addDoc(comentariosRef, {
+      nombre,
+      mensaje,
+      calificacion: parseInt(calificacion),
+      timestamp: Date.now()
+    });
+
+    form.reset();
+  });
+
+  function renderComentario(data) {
+    const div = document.createElement("div");
+    div.className = "bg-white p-4 rounded-xl shadow hidden";
+    div.innerHTML = `
+      <div class="flex items-center justify-between">
+        <p class="font-bold">${data.nombre}</p>
+        <div class="text-yellow-500">${"★".repeat(data.calificacion)}${"☆".repeat(5 - data.calificacion)}</div>
+      </div>
+      <p class="text-sm mt-2">${data.mensaje}</p>
+    `;
+    carousel.appendChild(div);
+  }
+
+  onSnapshot(comentariosRef, (snapshot) => {
+    carousel.innerHTML = "";
+    snapshot.docs
+      .sort((a, b) => a.data().timestamp - b.data().timestamp)
+      .forEach((doc, i) => {
+        renderComentario(doc.data());
+        if (i === 0) {
+          carousel.lastChild.classList.remove("hidden");
+        }
+      });
+  });
+
+  let currentTestimonial = 0;
   setInterval(() => {
-    testimonials[currentTestimonial].classList.add('hidden');
-    currentTestimonial = (currentTestimonial + 1) % testimonials.length;
-    testimonials[currentTestimonial].classList.remove('hidden');
+    const all = carousel.querySelectorAll("div");
+    if (all.length > 1) {
+      all[currentTestimonial].classList.add("hidden");
+      currentTestimonial = (currentTestimonial + 1) % all.length;
+      all[currentTestimonial].classList.remove("hidden");
+    }
   }, 5000);
 </script>
 
