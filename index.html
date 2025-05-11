@@ -124,7 +124,7 @@
       <p>Instagram</p>
     </div>
     <div class="text-center">
-      <img src="imagenes/qr_whatsapp.png" alt="QR Facebook" class="w-32 h-32 mx-auto mb-2 rounded" />
+      <img src="imagenes/qr_whatsapp.png" alt="QR WhatsApp" class="w-32 h-32 mx-auto mb-2 rounded" />
       <p>Whatsapp</p>
     </div>
   </div>
@@ -133,13 +133,21 @@
 <!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    query,
+    orderBy,
+    onSnapshot,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBDzdx427sDV7gSLby-GVi3n3OSyEv0EBw",
     authDomain: "pagina-citas-medicas-on-line.firebaseapp.com",
     projectId: "pagina-citas-medicas-on-line",
-    storageBucket: "pagina-citas-medicas-on-line.firebasestorage.app",
+    storageBucket: "pagina-citas-medicas-on-line.appspot.com",
     messagingSenderId: "822639587616",
     appId: "1:822639587616:web:2ac3396f14abc7eb39a745"
   };
@@ -153,18 +161,20 @@
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const nombre = document.getElementById("nombre").value;
-    const mensaje = document.getElementById("mensaje").value;
-    const calificacion = document.getElementById("calificacion").value;
+    const nombre = document.getElementById("nombre").value.trim();
+    const mensaje = document.getElementById("mensaje").value.trim();
+    const calificacion = parseInt(document.getElementById("calificacion").value);
 
-    await addDoc(comentariosRef, {
-      nombre,
-      mensaje,
-      calificacion: parseInt(calificacion),
-      timestamp: Date.now()
-    });
-
-    form.reset();
+    if (nombre && mensaje) {
+      await addDoc(comentariosRef, {
+        nombre,
+        mensaje,
+        calificacion,
+        timestamp: serverTimestamp()
+      });
+      form.reset();
+      alert("¡Gracias por tu comentario!");
+    }
   });
 
   function renderComentario(data) {
@@ -180,16 +190,20 @@
     carousel.appendChild(div);
   }
 
-  onSnapshot(comentariosRef, (snapshot) => {
+  const q = query(comentariosRef, orderBy("timestamp", "desc"));
+
+  onSnapshot(q, (snapshot) => {
     carousel.innerHTML = "";
-    snapshot.docs
-      .sort((a, b) => a.data().timestamp - b.data().timestamp)
-      .forEach((doc, i) => {
-        renderComentario(doc.data());
-        if (i === 0) {
-          carousel.lastChild.classList.remove("hidden");
-        }
-      });
+    const comentarios = snapshot.docs.map(doc => doc.data());
+
+    comentarios.forEach((comentario, i) => {
+      renderComentario(comentario);
+      if (i === 0) {
+        carousel.lastChild.classList.remove("hidden");
+      }
+    });
+
+    currentTestimonial = 0;
   });
 
   let currentTestimonial = 0;
