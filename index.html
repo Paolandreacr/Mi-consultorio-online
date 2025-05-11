@@ -159,23 +159,53 @@
   const carousel = document.getElementById("testimonios-carousel");
   const form = document.getElementById("comentario-form");
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const nombre = document.getElementById("nombre").value.trim();
-    const mensaje = document.getElementById("mensaje").value.trim();
-    const calificacion = parseInt(document.getElementById("calificacion").value);
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const nombre = document.getElementById("nombre").value.trim();
+  const mensaje = document.getElementById("mensaje").value.trim();
+  const calificacion = parseInt(document.getElementById("calificacion").value);
 
-    if (nombre && mensaje) {
-      await addDoc(comentariosRef, {
-        nombre,
-        mensaje,
-        calificacion,
-        timestamp: serverTimestamp()
-      });
-      form.reset();
-      alert("¡Gracias por tu comentario!");
-    }
+  // Lista simple de palabras ofensivas (puedes añadir más)
+  const malasPalabras = ["tonto", "idiota", "estúpido", "imbécil", "mierda"];
+
+  // Validar malas palabras
+  const contieneOfensivo = malasPalabras.some(palabra =>
+    mensaje.toLowerCase().includes(palabra)
+  );
+
+  if (contieneOfensivo) {
+    alert("Tu comentario contiene lenguaje inapropiado. Por favor, modifícalo.");
+    return;
+  }
+
+  // Evitar duplicados recientes (consultar últimos 5 mensajes del mismo nombre)
+  const qDuplicados = query(
+    comentariosRef,
+    orderBy("timestamp", "desc")
+  );
+
+  const snapshot = await getDocs(qDuplicados);
+  const duplicado = snapshot.docs.slice(0, 5).some(doc => {
+    const data = doc.data();
+    return data.nombre === nombre && data.mensaje === mensaje;
   });
+
+  if (duplicado) {
+    alert("Ya enviaste este comentario recientemente.");
+    return;
+  }
+
+  // Si pasa todas las validaciones, guardar
+  await addDoc(comentariosRef, {
+    nombre,
+    mensaje,
+    calificacion,
+    timestamp: serverTimestamp()
+  });
+
+  form.reset();
+  alert("¡Gracias por tu comentario!");
+});
 
   function renderComentario(data) {
     const div = document.createElement("div");
