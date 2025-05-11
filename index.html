@@ -96,156 +96,158 @@
 
 <!-- Comentarios y calificación -->
 <section class="p-8">
-  <h2 class="text-2xl font-semibold text-center mb-6">Opiniones de pacientes</h2>
-  <div id="testimonios-carousel" class="max-w-2xl mx-auto space-y-4"></div>
+    <h2 class="text-2xl font-semibold text-center mb-6">Opiniones de pacientes</h2>
+    <div id="testimonios-carousel" class="max-w-2xl mx-auto space-y-4"></div>
+    <form id="comentario-form" class="bg-white p-4 rounded-xl shadow space-y-4 mt-8">
+      <input type="text" id="nombre" placeholder="Tu nombre" class="w-full border border-gray-300 p-2 rounded" required>
+      <textarea id="mensaje" placeholder="Tu comentario" class="w-full border border-gray-300 p-2 rounded" required></textarea>
+      <select id="calificacion" class="w-full border border-gray-300 p-2 rounded">
+        <option value="5">★★★★★</option>
+        <option value="4">★★★★☆</option>
+        <option value="3">★★★☆☆</option>
+        <option value="2">★★☆☆☆</option>
+        <option value="1">★☆☆☆☆</option>
+      </select>
+      <button type="submit" class="bg-[var(--color-primario)] text-white px-4 py-2 rounded">Enviar</button>
+    </form>
+  </section>
 
-  <!-- Formulario de nuevo comentario -->
-  <form id="comentario-form" class="bg-white p-4 rounded-xl shadow space-y-4 mt-8">
-    <input type="text" id="nombre" placeholder="Tu nombre" class="w-full border border-gray-300 p-2 rounded" required>
-    <textarea id="mensaje" placeholder="Tu comentario" class="w-full border border-gray-300 p-2 rounded" required></textarea>
-    <select id="calificacion" class="w-full border border-gray-300 p-2 rounded">
-      <option value="5">★★★★★</option>
-      <option value="4">★★★★☆</option>
-      <option value="3">★★★☆☆</option>
-      <option value="2">★★☆☆☆</option>
-      <option value="1">★☆☆☆☆</option>
-    </select>
-    <button type="submit" class="bg-[var(--color-primario)] text-white px-4 py-2 rounded">Enviar</button>
-  </form>
-</section>
-
-<!-- Sección de contacto con códigos QR -->
-<section class="p-8 bg-[var(--color-secundario)] text-white">
-  <h2 class="text-2xl font-semibold text-center mb-6">Contacto</h2>
-  <p class="text-center mb-4">Escanea los códigos QR para visitar mis redes sociales:</p>
-  <div class="flex justify-center gap-8">
-    <div class="text-center">
-      <img src="imagenes/qr_instagram.png" alt="QR Instagram" class="w-32 h-32 mx-auto mb-2 rounded" />
-      <p>Instagram</p>
-    </div>
-    <div class="text-center">
-      <img src="imagenes/qr_whatsapp.png" alt="QR WhatsApp" class="w-32 h-32 mx-auto mb-2 rounded" />
-      <p>Whatsapp</p>
-    </div>
-  </div>
-</section>
-
-<!-- Firebase SDK -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-  import {
-    getFirestore,
-    collection,
-    addDoc,
-    query,
-    orderBy,
-    onSnapshot,
-    serverTimestamp
-  } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBDzdx427sDV7gSLby-GVi3n3OSyEv0EBw",
-    authDomain: "pagina-citas-medicas-on-line.firebaseapp.com",
-    projectId: "pagina-citas-medicas-on-line",
-    storageBucket: "pagina-citas-medicas-on-line.appspot.com",
-    messagingSenderId: "822639587616",
-    appId: "1:822639587616:web:2ac3396f14abc7eb39a745"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const comentariosRef = collection(db, "comentarios");
-
-  const carousel = document.getElementById("testimonios-carousel");
-  const form = document.getElementById("comentario-form");
-
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const nombre = document.getElementById("nombre").value.trim();
-  const mensaje = document.getElementById("mensaje").value.trim();
-  const calificacion = parseInt(document.getElementById("calificacion").value);
-
-  // Lista simple de palabras ofensivas (puedes añadir más)
-  const malasPalabras = ["tonto", "idiota", "estúpido", "imbécil", "mierda"];
-
-  // Validar malas palabras
-  const contieneOfensivo = malasPalabras.some(palabra =>
-    mensaje.toLowerCase().includes(palabra)
-  );
-
-  if (contieneOfensivo) {
-    alert("Tu comentario contiene lenguaje inapropiado. Por favor, modifícalo.");
-    return;
-  }
-
-  // Evitar duplicados recientes (consultar últimos 5 mensajes del mismo nombre)
-  const qDuplicados = query(
-    comentariosRef,
-    orderBy("timestamp", "desc")
-  );
-
-  const snapshot = await getDocs(qDuplicados);
-  const duplicado = snapshot.docs.slice(0, 5).some(doc => {
-    const data = doc.data();
-    return data.nombre === nombre && data.mensaje === mensaje;
-  });
-
-  if (duplicado) {
-    alert("Ya enviaste este comentario recientemente.");
-    return;
-  }
-
-  // Si pasa todas las validaciones, guardar
-  await addDoc(comentariosRef, {
-    nombre,
-    mensaje,
-    calificacion,
-    timestamp: serverTimestamp()
-  });
-
-  form.reset();
-  alert("¡Gracias por tu comentario!");
-});
-
-  function renderComentario(data) {
-    const div = document.createElement("div");
-    div.className = "bg-white p-4 rounded-xl shadow hidden";
-    div.innerHTML = `
-      <div class="flex items-center justify-between">
-        <p class="font-bold">${data.nombre}</p>
-        <div class="text-yellow-500">${"★".repeat(data.calificacion)}${"☆".repeat(5 - data.calificacion)}</div>
+  <section class="p-8 bg-[var(--color-secundario)] text-white">
+    <h2 class="text-2xl font-semibold text-center mb-6">Contacto</h2>
+    <p class="text-center mb-4">Escanea los códigos QR para visitar mis redes sociales:</p>
+    <div class="flex justify-center gap-8">
+      <div class="text-center">
+        <img src="imagenes/qr_instagram.png" alt="QR Instagram" class="w-32 h-32 mx-auto mb-2 rounded" />
+        <p>Instagram</p>
       </div>
-      <p class="text-sm mt-2">${data.mensaje}</p>
-    `;
-    carousel.appendChild(div);
-  }
+      <div class="text-center">
+        <img src="imagenes/qr_whatsapp.png" alt="QR WhatsApp" class="w-32 h-32 mx-auto mb-2 rounded" />
+        <p>Whatsapp</p>
+      </div>
+    </div>
+  </section>
 
-  const q = query(comentariosRef, orderBy("timestamp", "desc"));
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      getDocs,
+      query,
+      orderBy,
+      onSnapshot,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-  onSnapshot(q, (snapshot) => {
-    carousel.innerHTML = "";
-    const comentarios = snapshot.docs.map(doc => doc.data());
+    const firebaseConfig = {
+      apiKey: "AIzaSyBDzdx427sDV7gSLby-GVi3n3OSyEv0EBw",
+      authDomain: "pagina-citas-medicas-on-line.firebaseapp.com",
+      projectId: "pagina-citas-medicas-on-line",
+      storageBucket: "pagina-citas-medicas-on-line.appspot.com",
+      messagingSenderId: "822639587616",
+      appId: "1:822639587616:web:2ac3396f14abc7eb39a745"
+    };
 
-    comentarios.forEach((comentario, i) => {
-      renderComentario(comentario);
-      if (i === 0) {
-        carousel.lastChild.classList.remove("hidden");
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const comentariosRef = collection(db, "comentarios");
+
+    const carousel = document.getElementById("testimonios-carousel");
+    const form = document.getElementById("comentario-form");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const nombre = document.getElementById("nombre").value.trim();
+      const mensaje = document.getElementById("mensaje").value.trim();
+      const calificacion = parseInt(document.getElementById("calificacion").value);
+
+      if (!nombre || !mensaje || !calificacion) {
+        alert("Por favor, completa todos los campos.");
+        return;
+      }
+
+      const malasPalabras = ["tonto", "idiota", "estúpido", "imbécil", "mierda"];
+      const contieneOfensivo = malasPalabras.some(p => mensaje.toLowerCase().includes(p));
+
+      if (contieneOfensivo) {
+        alert("Tu comentario contiene lenguaje inapropiado.");
+        return;
+      }
+
+      try {
+        const snapshot = await getDocs(query(comentariosRef, orderBy("timestamp", "desc")));
+        const esDuplicado = snapshot.docs.slice(0, 5).some(doc => {
+          const data = doc.data();
+          return data.nombre === nombre && data.mensaje === mensaje;
+        });
+
+        if (esDuplicado) {
+          alert("Ya enviaste este comentario recientemente.");
+          return;
+        }
+
+        await addDoc(comentariosRef, {
+          nombre,
+          mensaje,
+          calificacion,
+          timestamp: serverTimestamp()
+        });
+
+        form.reset();
+        alert("¡Gracias por tu comentario!");
+      } catch (error) {
+        console.error("Error al enviar comentario:", error);
+        alert("Ocurrió un error al enviar tu comentario. Intenta de nuevo.");
       }
     });
 
-    currentTestimonial = 0;
-  });
-
-  let currentTestimonial = 0;
-  setInterval(() => {
-    const all = carousel.querySelectorAll("div");
-    if (all.length > 1) {
-      all[currentTestimonial].classList.add("hidden");
-      currentTestimonial = (currentTestimonial + 1) % all.length;
-      all[currentTestimonial].classList.remove("hidden");
+    function renderComentario(data) {
+      const div = document.createElement("div");
+      div.className = "bg-white p-4 rounded-xl shadow hidden";
+      div.innerHTML = `
+        <div class="flex items-center justify-between">
+          <p class="font-bold">${data.nombre}</p>
+          <div class="text-yellow-500">${"★".repeat(data.calificacion)}${"☆".repeat(5 - data.calificacion)}</div>
+        </div>
+        <p class="text-sm mt-2">${data.mensaje}</p>
+      `;
+      carousel.appendChild(div);
     }
-  }, 5000);
-</script>
+
+    const q = query(comentariosRef, orderBy("timestamp", "desc"));
+
+    onSnapshot(q, (snapshot) => {
+      carousel.innerHTML = "";
+      const comentarios = snapshot.docs.map(doc => doc.data());
+
+      comentarios.forEach((comentario, i) => {
+        renderComentario(comentario);
+        if (i === 0) {
+          carousel.lastChild.classList.remove("hidden");
+        }
+      });
+
+      currentTestimonial = 0;
+    });
+
+    let currentTestimonial = 0;
+    setInterval(() => {
+      const all = carousel.querySelectorAll("div");
+      if (all.length > 1) {
+        all[currentTestimonial].classList.add("hidden");
+        currentTestimonial = (currentTestimonial + 1) % all.length;
+        all[currentTestimonial].classList.remove("hidden");
+      }
+    }, 5000);
+  </script>
+
+  <footer class="p-6 text-center text-sm text-gray-600">
+    <p>© 2025 Dra. Paola Andrea Castro Rojas. Todos los derechos reservados.</p>
+    <p>Correo: paolan.caro97@gmail.com | Teléfono: (318) 748-8252</p>
+  </footer>
+</body>
+</html>
 
   <!-- Contacto -->
   <footer class="p-6 text-center text-sm text-gray-600">
