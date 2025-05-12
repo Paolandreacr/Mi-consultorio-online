@@ -49,7 +49,7 @@
     </div>
   </section>
 
-  <!-- Servicios -->
+ <!-- Servicios -->
   <section class="p-8">
     <h2 class="text-2xl font-semibold text-center mb-6">Servicios</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
@@ -63,28 +63,28 @@
       </div>
       <div class="bg-white rounded-2xl shadow p-4">
         <h3 class="text-lg font-bold mb-2">CONSULTA DE CONTROL - Medicina general</h3>
-        <p>Consulta de control posterior a cita inicial de primera vez, para realizar evolución de síntomas, revisión de exámenes solicitados, actualización diagnóstica y modificación de tratamiento. $70.000.oo pesos.</p>
+        <p>Consulta de control posterior a cita inicial de primera vez, para evolución de síntomas, revisión de exámenes, actualización diagnóstica y modificación de tratamiento. $70.000.oo pesos.</p>
       </div>
       <div class="bg-white rounded-2xl shadow p-4">
         <h3 class="text-lg font-bold mb-2">EXPEDICIÓN DE CERTIFICADOS MÉDICOS</h3>
-        <p>Certificado escolar. Certificado de salud adultos y niños. Certificado de capacidad mental. Certificado de antecedentes médicos. Certificado de borramiento de huellas dactilares. $50.000.oo pesos</p>
+        <p>Certificado escolar, de salud, de capacidad mental, de antecedentes médicos, de borramiento de huellas dactilares. $50.000.oo pesos.</p>
       </div>
       <div class="bg-white rounded-2xl shadow p-4">
         <h3 class="text-lg font-bold mb-2">CONSULTA MÉDICA CON ENFOQUE EN SALUD MENTAL</h3>
-        <p>Evaluación médica y mental on line completa, con actualización de estado médico y antecedentes, diagnóstico inicial, tratamiento y recomendaciones $120.000.oo pesos</p>
-    </div>
+        <p>Evaluación médica y mental on line completa. $120.000.oo pesos.</p>
+      </div>
+    </div> <!-- <-- ¡Cerramos aquí el grid! -->
   </section>
 
   <!-- Agenda tu cita -->
   <section class="p-8 bg-[var(--color-acento)]">
     <h2 class="text-2xl font-semibold text-center mb-6">Agenda tu cita</h2>
-    <!-- Calendly Embed -->
     <div class="max-w-3xl mx-auto">
       <iframe src="https://calendly.com/paolan-caro97" width="100%" height="600" frameborder="0" class="rounded-xl shadow"></iframe>
     </div>
   </section>
 
- <!-- Comentarios y calificación -->
+  <!-- Comentarios y calificación -->
   <section class="p-8">
     <h2 class="text-2xl font-semibold text-center mb-6">Opiniones de pacientes</h2>
     <div id="testimonios-carousel" class="max-w-2xl mx-auto space-y-4"></div>
@@ -102,92 +102,7 @@
     </form>
   </section>
 
-  <script type="module">
-    // Importaciones necesarias desde Firebase v9 modular
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      serverTimestamp,
-      getDocs
-    } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-
-    // Configuración de Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyD-FvCr6vHDOToqKfGOn3bXf5MNzrfqT8U",
-      authDomain: "comentarios-70ae6.firebaseapp.com",
-      projectId: "comentarios-70ae6",
-      storageBucket: "comentarios-70ae6.appspot.com",
-      messagingSenderId: "233112209992",
-      appId: "1:233112209992:web:6ae3bc4ff3b4a22a1776aa"
-    };
-
-    // Inicializa la app y Firestore
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const comentariosRef = collection(db, "comentarios");
-
-    // Manejo del formulario
-    const form = document.getElementById("comentario-form");
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const nombre = document.getElementById("nombre").value.trim();
-      const mensaje = document.getElementById("mensaje").value.trim();
-      const calificacion = parseInt(document.getElementById("calificacion").value);
-
-      // Validaciones básicas
-      if (!nombre || !mensaje || isNaN(calificacion)) {
-        alert("Por favor completa todos los campos.");
-        return;
-      }
-
-      try {
-        await addDoc(comentariosRef, {
-          nombre,
-          mensaje,
-          calificacion,
-          timestamp: serverTimestamp()
-        });
-
-        form.reset();
-        alert("¡Gracias por tu comentario!");
-        loadComentarios();  // Cargar los comentarios después de enviar uno nuevo.
-      } catch (error) {
-        console.error("Error al guardar comentario:", error);
-        alert("Ocurrió un error al enviar tu comentario. Intenta de nuevo.");
-      }
-    });
-
-    // Función para cargar y mostrar los comentarios
-    async function loadComentarios() {
-      const querySnapshot = await getDocs(comentariosRef);
-      const comentariosList = document.getElementById("testimonios-carousel");
-      comentariosList.innerHTML = '';  // Limpiar los comentarios previos
-
-      querySnapshot.forEach((doc) => {
-        const comentario = doc.data();
-        const div = document.createElement("div");
-        div.classList.add("p-4", "bg-white", "rounded-xl", "shadow", "space-y-2");
-
-        div.innerHTML = `
-          <h4 class="font-semibold">${comentario.nombre}</h4>
-          <p class="text-gray-600">${comentario.mensaje}</p>
-          <p class="text-yellow-500">Calificación: ${'★'.repeat(comentario.calificacion)}</p>
-        `;
-
-        comentariosList.appendChild(div);
-      });
-    }
-
-    // Cargar los comentarios al cargar la página
-    window.onload = loadComentarios;
-
-  </script>
-</body>
-</html>
-
+  <!-- Redes sociales / Contacto -->
   <section class="p-8 bg-[var(--color-acento)] text-black">
     <h2 class="text-2xl font-semibold text-center mb-6">Contacto</h2>
     <p class="text-center mb-4">Escanea los códigos QR para visitar mis redes sociales:</p>
@@ -203,7 +118,57 @@
     </div>
   </section>
 
-<!-- Contacto -->
+  <!-- Firebase + lógica de comentarios -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-FvCr6vHDOToqKfGOn3bXf5MNzrfqT8U",
+      authDomain: "comentarios-70ae6.firebaseapp.com",
+      projectId: "comentarios-70ae6",
+      storageBucket: "comentarios-70ae6.appspot.com",
+      messagingSenderId: "233112209992",
+      appId: "1:233112209992:web:6ae3bc4ff3b4a22a1776aa"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const comentariosRef = collection(db, "comentarios");
+
+    document.getElementById("comentario-form").addEventListener("submit", async e => {
+      e.preventDefault();
+      const nombre = document.getElementById("nombre").value.trim();
+      const mensaje = document.getElementById("mensaje").value.trim();
+      const calificacion = parseInt(document.getElementById("calificacion").value);
+      if (!nombre || !mensaje || isNaN(calificacion)) {
+        return alert("Por favor completa todos los campos.");
+      }
+      await addDoc(comentariosRef, { nombre, mensaje, calificacion, timestamp: serverTimestamp() });
+      e.target.reset();
+      loadComentarios();
+    });
+
+    async function loadComentarios() {
+      const snapshot = await getDocs(comentariosRef);
+      const cont = document.getElementById("testimonios-carousel");
+      cont.innerHTML = "";
+      snapshot.forEach(doc => {
+        const { nombre, mensaje, calificacion } = doc.data();
+        const div = document.createElement("div");
+        div.className = "p-4 bg-white rounded-xl shadow space-y-2";
+        div.innerHTML = `
+          <h4 class="font-semibold">${nombre}</h4>
+          <p class="text-gray-600">${mensaje}</p>
+          <p class="text-yellow-500">${"★".repeat(calificacion)}</p>
+        `;
+        cont.appendChild(div);
+      });
+    }
+
+    window.onload = loadComentarios;
+  </script>
+
+  <!-- Pie de página -->
   <footer class="p-6 text-center text-sm text-gray-600">
     <p>© 2025 Dra. Paola Andrea Castro Rojas. Todos los derechos reservados.</p>
     <p>Correo: paolan.caro97@gmail.com | Teléfono: (318) 748-8252</p>
