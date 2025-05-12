@@ -84,6 +84,171 @@
     </div>
   </section>
 
+  .carousel-item {
+      display: none;
+    }
+    .carousel-item:first-child {
+      display: block;
+    }
+    .prev-btn, .next-btn {
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .prev-btn:hover, .next-btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body class="bg-[var(--color-base)] text-gray-800 font-sans">
+  <!-- Formulario de Comentarios -->
+  <section class="p-8">
+    <h2 class="text-2xl font-semibold text-center mb-6">Deja tu comentario</h2>
+    <form id="comentario-form" class="bg-white p-4 rounded-xl shadow space-y-4 mt-8">
+      <input type="text" id="nombre" placeholder="Tu nombre" class="w-full border border-gray-300 p-2 rounded" required>
+      <textarea id="mensaje" placeholder="Tu comentario" class="w-full border border-gray-300 p-2 rounded" required></textarea>
+      <select id="calificacion" class="w-full border border-gray-300 p-2 rounded">
+        <option value="5">★★★★★</option>
+        <option value="4">★★★★☆</option>
+        <option value="3">★★★☆☆</option>
+        <option value="2">★★☆☆☆</option>
+        <option value="1">★☆☆☆☆</option>
+      </select>
+      <button type="submit" class="bg-[var(--color-primario)] text-white px-4 py-2 rounded">Enviar</button>
+    </form>
+  </section>
+
+  <!-- Carrusel de Comentarios -->
+  <section class="p-8">
+    <h2 class="text-2xl font-semibold text-center mb-6">Opiniones de pacientes</h2>
+    <div id="testimonios-carousel" class="max-w-2xl mx-auto space-y-4">
+      <!-- Comentarios aparecerán aquí -->
+    </div>
+  </section>
+
+  <!-- Firebase y código JavaScript -->
+  <script type="module">
+    // Importar Firebase SDK
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+    // Configuración de Firebase (la que te dio Firebase)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCPhH9O-kSE5pY8kfhvr7qUQeC5mQbPhdQ",
+      authDomain: "comentarios-web-41599.firebaseapp.com",
+      projectId: "comentarios-web-41599",
+      storageBucket: "comentarios-web-41599.firebasestorage.app",
+      messagingSenderId: "1070200269216",
+      appId: "1:1070200269216:web:6163392be2ecf2f8471cc5",
+      measurementId: "G-JZ04DFKJSK"
+    };
+
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const comentariosRef = collection(db, "comentarios");
+
+    // Formulario de comentarios
+    const form = document.getElementById("comentario-form");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const nombre = document.getElementById("nombre").value.trim();
+      const mensaje = document.getElementById("mensaje").value.trim();
+      const calificacion = parseInt(document.getElementById("calificacion").value);
+
+      // Validar datos
+      if (!nombre || !mensaje || isNaN(calificacion)) {
+        alert("Por favor completa todos los campos.");
+        return;
+      }
+
+      try {
+        // Guardar comentario en Firebase
+        await addDoc(comentariosRef, {
+          nombre,
+          mensaje,
+          calificacion,
+          timestamp: serverTimestamp()
+        });
+
+        // Limpiar formulario y cargar comentarios
+        form.reset();
+        alert("¡Gracias por tu comentario!");
+        loadComentarios();
+      } catch (error) {
+        console.error("Error al guardar comentario:", error);
+        alert("Ocurrió un error al enviar tu comentario. Intenta de nuevo.");
+      }
+    });
+
+    // Función para cargar los comentarios
+    async function loadComentarios() {
+      const querySnapshot = await getDocs(comentariosRef);
+      const comentariosList = document.getElementById("testimonios-carousel");
+      comentariosList.innerHTML = '';  // Limpiar los comentarios previos
+
+      querySnapshot.forEach((doc) => {
+        const comentario = doc.data();
+        const div = document.createElement("div");
+        div.classList.add("p-4", "bg-white", "rounded-xl", "shadow", "space-y-2", "carousel-item");
+
+        div.innerHTML = `
+          <h4 class="font-semibold">${comentario.nombre}</h4>
+          <p class="text-gray-600">${comentario.mensaje}</p>
+          <p class="text-yellow-500">Calificación: ${'★'.repeat(comentario.calificacion)}</p>
+        `;
+
+        comentariosList.appendChild(div);
+      });
+    }
+
+    // Inicializar el carrusel al cargar la página
+    window.onload = function() {
+      loadComentarios();
+      
+      let index = 0;
+      const items = document.querySelectorAll(".carousel-item");
+      const prevBtn = document.createElement("button");
+      const nextBtn = document.createElement("button");
+
+      prevBtn.textContent = "←";
+      nextBtn.textContent = "→";
+
+      prevBtn.classList.add("prev-btn");
+      nextBtn.classList.add("next-btn");
+
+      document.getElementById("testimonios-carousel").append(prevBtn, nextBtn);
+
+      nextBtn.addEventListener("click", function() {
+        if (index < items.length - 1) {
+          index++;
+          updateCarousel();
+        }
+      });
+
+      prevBtn.addEventListener("click", function() {
+        if (index > 0) {
+          index--;
+          updateCarousel();
+        }
+      });
+
+      function updateCarousel() {
+        items.forEach((item, i) => {
+          item.style.display = (i === index) ? "block" : "none";
+        });
+      }
+
+      updateCarousel(); // Inicializa el carrusel
+    };
+  </script>
+</body>
+</html>
+
   <!-- Redes sociales / Contacto -->
   <section class="p-8 bg-[var(--color-acento)] text-black">
     <h2 class="text-2xl font-semibold text-center mb-6">Contacto</h2>
