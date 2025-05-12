@@ -119,15 +119,19 @@
     </form>
   </section>
 
-  <!-- Carrusel de Comentarios -->
+ <!-- Sección de Comentarios -->
   <section class="p-8">
     <h2 class="text-2xl font-semibold text-center mb-6">Opiniones de pacientes</h2>
     <div id="testimonios-carousel" class="max-w-2xl mx-auto space-y-4">
-      <!-- Comentarios aparecerán aquí -->
+      <!-- Comentarios se insertan aquí -->
+    </div>
+    <div class="carousel-controls">
+      <button class="prev-btn" onclick="prev()">Anterior</button>
+      <button class="next-btn" onclick="next()">Siguiente</button>
     </div>
   </section>
 
-  <!-- Firebase y código JavaScript -->
+  <!-- Firebase y lógica del carrusel -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
     import { getFirestore, collection, addDoc, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
@@ -136,7 +140,7 @@
       apiKey: "AIzaSyCPhH9O-kSE5pY8kfhvr7qUQeC5mQbPhdQ",
       authDomain: "comentarios-web-41599.firebaseapp.com",
       projectId: "comentarios-web-41599",
-      storageBucket: "comentarios-web-41599.firebasestorage.app",
+      storageBucket: "comentarios-web-41599.appspot.com",
       messagingSenderId: "1070200269216",
       appId: "1:1070200269216:web:6163392be2ecf2f8471cc5",
       measurementId: "G-JZ04DFKJSK"
@@ -146,70 +150,47 @@
     const db = getFirestore(app);
     const comentariosRef = collection(db, "comentarios");
 
-    const form = document.getElementById("comentario-form");
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const nombre = document.getElementById("nombre").value.trim();
-      const mensaje = document.getElementById("mensaje").value.trim();
-      const calificacion = parseInt(document.getElementById("calificacion").value);
-
-      if (!nombre || !mensaje || isNaN(calificacion)) {
-        alert("Por favor completa todos los campos.");
-        return;
-      }
-
-      try {
-        await addDoc(comentariosRef, {
-          nombre,
-          mensaje,
-          calificacion,
-          timestamp: serverTimestamp()
-        });
-
-        form.reset();
-        alert("¡Gracias por tu comentario!");
-        loadComentarios();
-      } catch (error) {
-        console.error("Error al guardar comentario:", error);
-        alert("Ocurrió un error al enviar tu comentario. Intenta de nuevo.");
-      }
-    });
+    let items = [];
+    let currentIndex = 0;
 
     async function loadComentarios() {
       const querySnapshot = await getDocs(comentariosRef);
-      const comentariosList = document.getElementById("testimonios-carousel");
-      comentariosList.innerHTML = '';
+      const carousel = document.getElementById("testimonios-carousel");
+      carousel.innerHTML = '';
+
+      items = [];
 
       querySnapshot.forEach((doc) => {
         const { nombre, mensaje, calificacion } = doc.data();
 
         const div = document.createElement("div");
-        div.classList.add("carousel-item", "bg-white", "p-4", "rounded-xl", "shadow", "space-y-2");
+        div.className = "carousel-item bg-white p-4 rounded-xl shadow space-y-2";
         div.innerHTML = `
           <p class="font-semibold">${nombre}</p>
           <p>${mensaje}</p>
           <p>Calificación: ${"★".repeat(calificacion)}</p>
         `;
-        comentariosList.appendChild(div);
+        items.push(div);
+        carousel.appendChild(div);
       });
-    }
 
-    let currentIndex = 0;
-    const items = document.querySelectorAll(".carousel-item");
+      showItem(currentIndex);
+    }
 
     function showItem(index) {
       items.forEach((item, i) => {
-        item.style.display = i === index ? "block" : "none";
+        item.classList.toggle("active", i === index);
       });
     }
 
     function next() {
+      if (items.length === 0) return;
       currentIndex = (currentIndex + 1) % items.length;
       showItem(currentIndex);
     }
 
     function prev() {
+      if (items.length === 0) return;
       currentIndex = (currentIndex - 1 + items.length) % items.length;
       showItem(currentIndex);
     }
