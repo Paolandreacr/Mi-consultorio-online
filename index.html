@@ -11,6 +11,24 @@
       --color-acento: #c8b6a6; /* marrón claro */
       --color-primario: #ADD8E6; /* terracota suave */
     }
+
+    .carousel-item {
+      display: none;
+    }
+    .carousel-item:first-child {
+      display: block;
+    }
+    .prev-btn, .next-btn {
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .prev-btn:hover, .next-btn:hover {
+      background-color: #0056b3;
+    }
   </style>
 </head>
 <body class="bg-[var(--color-base)] text-gray-800 font-sans">
@@ -35,7 +53,7 @@
     <p class="max-w-xl mx-auto text-center">
       Soy médica general con más de 5 años de experiencia, magíster en psiquiatría forense y con múltiples diplomados y estudios en patologías mentales. Comprometida con la salud y el bienestar de mis pacientes.
     </p>
-     <!-- Galería de diplomas -->
+    <!-- Galería de diplomas -->
     <div class="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
       <img src="imagenes/diploma1.png" alt="Diploma 1" class="rounded shadow cursor-pointer" onclick="openLightbox(0)">
       <img src="imagenes/diploma2.png" alt="Diploma 2" class="rounded shadow cursor-pointer" onclick="openLightbox(1)">
@@ -49,7 +67,7 @@
     </div>
   </section>
 
- <!-- Servicios -->
+  <!-- Servicios -->
   <section class="p-8">
     <h2 class="text-2xl font-semibold text-center mb-6">Servicios</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
@@ -73,7 +91,7 @@
         <h3 class="text-lg font-bold mb-2">CONSULTA MÉDICA CON ENFOQUE EN SALUD MENTAL</h3>
         <p>Evaluación médica y mental on line completa. $120.000.oo pesos.</p>
       </div>
-    </div> <!-- <-- ¡Cerramos aquí el grid! -->
+    </div>
   </section>
 
   <!-- Agenda tu cita -->
@@ -84,26 +102,6 @@
     </div>
   </section>
 
-  .carousel-item {
-      display: none;
-    }
-    .carousel-item:first-child {
-      display: block;
-    }
-    .prev-btn, .next-btn {
-      background-color: #007BFF;
-      color: white;
-      border: none;
-      padding: 10px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    .prev-btn:hover, .next-btn:hover {
-      background-color: #0056b3;
-    }
-  </style>
-</head>
-<body class="bg-[var(--color-base)] text-gray-800 font-sans">
   <!-- Formulario de Comentarios -->
   <section class="p-8">
     <h2 class="text-2xl font-semibold text-center mb-6">Deja tu comentario</h2>
@@ -131,11 +129,9 @@
 
   <!-- Firebase y código JavaScript -->
   <script type="module">
-    // Importar Firebase SDK
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
     import { getFirestore, collection, addDoc, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-    // Configuración de Firebase (la que te dio Firebase)
     const firebaseConfig = {
       apiKey: "AIzaSyCPhH9O-kSE5pY8kfhvr7qUQeC5mQbPhdQ",
       authDomain: "comentarios-web-41599.firebaseapp.com",
@@ -146,12 +142,10 @@
       measurementId: "G-JZ04DFKJSK"
     };
 
-    // Inicializar Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const comentariosRef = collection(db, "comentarios");
 
-    // Formulario de comentarios
     const form = document.getElementById("comentario-form");
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -160,14 +154,12 @@
       const mensaje = document.getElementById("mensaje").value.trim();
       const calificacion = parseInt(document.getElementById("calificacion").value);
 
-      // Validar datos
       if (!nombre || !mensaje || isNaN(calificacion)) {
         alert("Por favor completa todos los campos.");
         return;
       }
 
       try {
-        // Guardar comentario en Firebase
         await addDoc(comentariosRef, {
           nombre,
           mensaje,
@@ -175,7 +167,6 @@
           timestamp: serverTimestamp()
         });
 
-        // Limpiar formulario y cargar comentarios
         form.reset();
         alert("¡Gracias por tu comentario!");
         loadComentarios();
@@ -185,11 +176,10 @@
       }
     });
 
-    // Función para cargar los comentarios
     async function loadComentarios() {
       const querySnapshot = await getDocs(comentariosRef);
       const comentariosList = document.getElementById("testimonios-carousel");
-      comentariosList.innerHTML = '';  // Limpiar los comentarios previos
+      comentariosList.innerHTML = '';
 
       querySnapshot.forEach((doc) => {
         const comentario = doc.data();
@@ -206,7 +196,6 @@
       });
     }
 
-    // Inicializar el carrusel al cargar la página
     window.onload = function() {
       loadComentarios();
       
@@ -243,11 +232,9 @@
         });
       }
 
-      updateCarousel(); // Inicializa el carrusel
+      updateCarousel();
     };
   </script>
-</body>
-</html>
 
   <!-- Redes sociales / Contacto -->
   <section class="p-8 bg-[var(--color-acento)] text-black">
@@ -265,7 +252,7 @@
     </div>
   </section>
 
-  <!-- Pie de página -->
+ <!-- Pie de página -->
   <footer class="p-6 text-center text-sm text-gray-600">
     <p>© 2025 Dra. Paola Andrea Castro Rojas. Todos los derechos reservados.</p>
     <p>Correo: paolan.caro97@gmail.com | Teléfono: (318) 748-8252</p>
