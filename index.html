@@ -84,24 +84,6 @@
     </div>
   </section>
 
-  <!-- Comentarios y calificación -->
-  <section class="p-8">
-    <h2 class="text-2xl font-semibold text-center mb-6">Opiniones de pacientes</h2>
-    <div id="testimonios-carousel" class="max-w-2xl mx-auto space-y-4"></div>
-    <form id="comentario-form" class="bg-white p-4 rounded-xl shadow space-y-4 mt-8">
-      <input type="text" id="nombre" placeholder="Tu nombre" class="w-full border border-gray-300 p-2 rounded" required>
-      <textarea id="mensaje" placeholder="Tu comentario" class="w-full border border-gray-300 p-2 rounded" required></textarea>
-      <select id="calificacion" class="w-full border border-gray-300 p-2 rounded">
-        <option value="5">★★★★★</option>
-        <option value="4">★★★★☆</option>
-        <option value="3">★★★☆☆</option>
-        <option value="2">★★☆☆☆</option>
-        <option value="1">★☆☆☆☆</option>
-      </select>
-      <button type="submit" class="bg-[var(--color-primario)] text-white px-4 py-2 rounded">Enviar</button>
-    </form>
-  </section>
-
   <!-- Redes sociales / Contacto -->
   <section class="p-8 bg-[var(--color-acento)] text-black">
     <h2 class="text-2xl font-semibold text-center mb-6">Contacto</h2>
@@ -117,56 +99,6 @@
       </div>
     </div>
   </section>
-
-  <!-- Firebase + lógica de comentarios -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyD-FvCr6vHDOToqKfGOn3bXf5MNzrfqT8U",
-      authDomain: "comentarios-70ae6.firebaseapp.com",
-      projectId: "comentarios-70ae6",
-      storageBucket: "comentarios-70ae6.appspot.com",
-      messagingSenderId: "233112209992",
-      appId: "1:233112209992:web:6ae3bc4ff3b4a22a1776aa"
-    };
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const comentariosRef = collection(db, "comentarios");
-
-    document.getElementById("comentario-form").addEventListener("submit", async e => {
-      e.preventDefault();
-      const nombre = document.getElementById("nombre").value.trim();
-      const mensaje = document.getElementById("mensaje").value.trim();
-      const calificacion = parseInt(document.getElementById("calificacion").value);
-      if (!nombre || !mensaje || isNaN(calificacion)) {
-        return alert("Por favor completa todos los campos.");
-      }
-      await addDoc(comentariosRef, { nombre, mensaje, calificacion, timestamp: serverTimestamp() });
-      e.target.reset();
-      loadComentarios();
-    });
-
-    async function loadComentarios() {
-      const snapshot = await getDocs(comentariosRef);
-      const cont = document.getElementById("testimonios-carousel");
-      cont.innerHTML = "";
-      snapshot.forEach(doc => {
-        const { nombre, mensaje, calificacion } = doc.data();
-        const div = document.createElement("div");
-        div.className = "p-4 bg-white rounded-xl shadow space-y-2";
-        div.innerHTML = `
-          <h4 class="font-semibold">${nombre}</h4>
-          <p class="text-gray-600">${mensaje}</p>
-          <p class="text-yellow-500">${"★".repeat(calificacion)}</p>
-        `;
-        cont.appendChild(div);
-      });
-    }
-
-    window.onload = loadComentarios;
-  </script>
 
   <!-- Pie de página -->
   <footer class="p-6 text-center text-sm text-gray-600">
