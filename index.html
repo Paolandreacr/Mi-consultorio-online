@@ -214,10 +214,10 @@
     nextBtn.setAttribute("aria-label", "Comentario siguiente");
 
     // Estilos actualizados con bg-sky-300
-    const btnClasses = "absolute top-1/2 transform -translate-y-1/2 bg-sky-300 text-white border-2 border-white rounded-full w-10 h-10 flex items-center justify-center shadow-md hover:bg-sky-400 transition-shadow duration-200";
+    const btnClasses = "absolute top-1/2 transform -translate-y-1/2 bg-sky-200 text-white border-2 border-white rounded-full w-10 h-10 flex items-center justify-center shadow-md hover:bg-sky-400 transition-transform duration-200 z-10";
 
-    prevBtn.className = `${btnClasses} left-0`;
-    nextBtn.className = `${btnClasses} right-0`;
+    prevBtn.className = `${btnClasses} -left-6 -translate-x-full`;
+    nextBtn.className = `${btnClasses} -right-6 translate-x-full`;
 
     comentariosList.appendChild(prevBtn);
     comentariosList.appendChild(nextBtn);
