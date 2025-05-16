@@ -28,13 +28,7 @@
     .prev-btn:hover, .next-btn:hover {
       background-color: #87CEEB;
     }
-    /* Colores personalizados para los botones de carrusel */
-    .bg-lilac {
-      background-color: #BDAEDE;
-    }
-    .bg-lilac-dark {
-      background-color: #9C8AC6;
-    }
+    /* Eliminadas las clases bg-lilac y bg-lilac-dark */
   </style>
 </head>
 <body class="bg-[var(--color-base)] text-gray-800 font-sans">
@@ -213,8 +207,7 @@
       prevBtn.setAttribute("aria-label", "Comentario anterior");
       nextBtn.setAttribute("aria-label", "Comentario siguiente");
 
-      // Estilos con clases Tailwind y personalizados
-      const btnClasses = "absolute top-1/2 transform -translate-y-1/2 bg-lilac text-white border-2 border-white rounded-full w-10 h-10 flex items-center justify-center shadow-md hover:bg-lilac-dark transition-transform duration-200 z-10 cursor-pointer";
+      const btnClasses = "absolute top-1/2 transform -translate-y-1/2 bg-purple-500 text-white border-2 border-white rounded-full w-10 h-10 flex items-center justify-center shadow-md hover:bg-purple-700 transition-colors duration-200 z-10 cursor-pointer";
 
       prevBtn.className = `${btnClasses} -left-6 -translate-x-full`;
       nextBtn.className = `${btnClasses} -right-6 translate-x-full`;
@@ -222,36 +215,26 @@
       comentariosList.appendChild(prevBtn);
       comentariosList.appendChild(nextBtn);
 
-      let index = 0;
-      const items = document.querySelectorAll(".carousel-item");
+      let currentIndex = 0;
 
-      function updateCarousel() {
+      function showComment(index) {
+        const items = comentariosList.querySelectorAll(".carousel-item");
         items.forEach((item, i) => {
-          item.style.display = (i === index) ? "block" : "none";
+          item.style.display = i === index ? "block" : "none";
         });
       }
 
-      nextBtn.addEventListener("click", () => {
-        index = (index + 1) % items.length;
-        updateCarousel();
-      });
-
-      prevBtn.addEventListener("click", () => {
-        index = (index - 1 + items.length) % items.length;
-        updateCarousel();
-      });
+      prevBtn.onclick = () => {
+        currentIndex = (currentIndex - 1 + comentarios.length) % comentarios.length;
+        showComment(currentIndex);
+      };
+      nextBtn.onclick = () => {
+        currentIndex = (currentIndex + 1) % comentarios.length;
+        showComment(currentIndex);
+      };
     }
 
-    window.onload = () => {
-      loadComentarios();
-    };
-
-    // Lightbox básico para diplomas (puedes mejorar o usar librería)
-    function openLightbox(index) {
-      alert("Abrir imagen del diploma #" + (index + 1));
-      // Aquí podrías implementar un lightbox real con modal.
-    }
-    window.openLightbox = openLightbox;
+    loadComentarios();
   </script>
 
   <!-- Redes sociales / Contacto -->
