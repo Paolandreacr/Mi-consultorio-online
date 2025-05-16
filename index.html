@@ -7,11 +7,10 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root {
-      --color-base: #f5efe6; /* beige */
-      --color-acento: #c8b6a6; /* marrón claro */
-      --color-primario: #BDAEDE; /* terracota suave */
+      --color-base: #f5efe6;
+      --color-acento: #c8b6a6;
+      --color-primario: #BDAEDE;
     }
-
     .carousel-item {
       display: none;
     }
@@ -27,18 +26,16 @@
       font-size: 16px;
     }
     .prev-btn:hover, .next-btn:hover {
-      background-color: #ADD8E6;
+      background-color: #87CEEB;
     }
   </style>
 </head>
 <body class="bg-[var(--color-base)] text-gray-800 font-sans">
-  <!-- Encabezado -->
   <header class="bg-[var(--color-primario)] p-6 shadow-md">
     <h1 class="text-3xl font-bold text-center">Dra. Paola Andrea Castro Rojas</h1>
     <p class="text-center text-sm">Servicios Médicos Integrales on line</p>
   </header>
 
-  <!-- Sección Inicio -->
   <section class="p-8 text-center">
     <h2 class="text-2xl font-semibold mb-4">Bienvenido</h2>
     <p class="max-w-xl mx-auto">
@@ -46,16 +43,13 @@
     </p>
   </section>
 
-  <!-- Sobre mí -->
   <section class="p-8 bg-[var(--color-acento)]">
     <h2 class="text-2xl font-semibold text-center mb-4">Sobre mí</h2>
     <img src="imagenes/fotomia.jpg" alt="Foto de la doctora" class="w-40 h-45 mx-auto rounded-full shadow-lg mb-4">
     <p class="max-w-xl mx-auto text-center">
       Soy médica general con más de 5 años de experiencia, magíster en psiquiatría forense y con múltiples diplomados y estudios en patologías mentales. Comprometida con la salud y el bienestar de mis pacientes.
     </p>
-    
-<!-- Galería de diplomas -->
-<div class="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto mt-8">
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto mt-8">
       <img src="imagenes/diploma1.png" alt="Diploma 1" class="rounded shadow cursor-pointer" onclick="openLightbox(0)">
       <img src="imagenes/diploma2.png" alt="Diploma 2" class="rounded shadow cursor-pointer" onclick="openLightbox(1)">
       <img src="imagenes/diploma3.png" alt="Diploma 3" class="rounded shadow cursor-pointer" onclick="openLightbox(2)">
@@ -68,29 +62,28 @@
     </div>
   </section>
 
-  <!-- Servicios -->
   <section class="p-8">
     <h2 class="text-2xl font-semibold text-center mb-6">Servicios</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-      <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition>
+      <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
         <h3 class="text-lg font-bold mb-2">CONSULTA MÉDICA BILINGÜE</h3>
-        <p>Comprehensive medical appointment. 70.oo dólares.</p>
+        <p>Comprehensive medical appointment. 70.00 dólares.</p>
       </div>
-      <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition>
+      <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
         <h3 class="text-lg font-bold mb-2">CONSULTA DE PRIMERA VEZ ON LINE - Medicina General</h3>
-        <p>Evaluación médica on line completa de primera vez, con actualización de estado médico y antecedentes, diagnóstico inicial, tratamiento y recomendaciones. $100.000.oo pesos.</p>
+        <p>Evaluación médica on line completa de primera vez, con actualización de estado médico y antecedentes, diagnóstico inicial, tratamiento y recomendaciones. $100.000 pesos.</p>
       </div>
-      <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition>
+      <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
         <h3 class="text-lg font-bold mb-2">CONSULTA DE CONTROL - Medicina general</h3>
-        <p>Consulta de control posterior a cita inicial de primera vez, para evolución de síntomas, revisión de exámenes, actualización diagnóstica y modificación de tratamiento. $70.000.oo pesos.</p>
+        <p>Consulta de control posterior a cita inicial, para evolución de síntomas, revisión de exámenes, actualización diagnóstica y modificación de tratamiento. $70.000 pesos.</p>
       </div>
-      <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition>
+      <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
         <h3 class="text-lg font-bold mb-2">EXPEDICIÓN DE CERTIFICADOS MÉDICOS</h3>
-        <p>Certificado escolar, de salud, de capacidad mental, de antecedentes médicos, de borramiento de huellas dactilares. $50.000.oo pesos.</p>
+        <p>Certificado escolar, de salud, de capacidad mental, de antecedentes médicos, de borramiento de huellas dactilares. $50.000 pesos.</p>
       </div>
-      <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition>
+      <div class="bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
         <h3 class="text-lg font-bold mb-2">CONSULTA MÉDICA CON ENFOQUE EN SALUD MENTAL</h3>
-        <p>Evaluación médica y mental on line completa. $120.000.oo pesos.</p>
+        <p>Evaluación médica y mental on line completa. $120.000 pesos.</p>
       </div>
     </div>
   </section>
